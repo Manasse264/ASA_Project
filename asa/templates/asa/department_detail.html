@@ -1,0 +1,30 @@
+{% extends "asa/index.html" %}
+
+{% block title %}{{ department.get_name_display }} - Department{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem 5%; max-width: 850px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color);">Department Profile</h2>
+        <div>
+            <a href="{% url 'department_list' %}" class="btn btn-outline" style="color: var(--primary-color); border-color: var(--primary-color);">Back to List</a>
+            <a href="{% url 'department_update' department.pk %}" class="btn btn-filled">Update</a>
+            <a href="{% url 'department_delete' department.pk %}" class="btn btn-outline" style="color: #d9534f; border-color: #d9534f;">Delete</a>
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <p><strong>Department:</strong> {{ department.get_name_display }}</p>
+                <p><strong>Registered:</strong> {{ department.registration_date|date:"F j, Y" }}</p>
+            </div>
+            <div>
+                <p><strong>Leader:</strong> {{ department.leader.full_name|default:"Not assigned" }}</p>
+                <p><strong>Phone:</strong> {{ department.leader.phone_number|default:"Not provided" }}</p>
+                <p><strong>Email:</strong> {{ department.leader.email|default:"Not provided" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

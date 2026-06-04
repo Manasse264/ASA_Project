@@ -1,0 +1,57 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Departments - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="color: var(--primary-color);">Departments</h2>
+            <p style="font-weight: 700;">Register departments and assign leaders</p>
+        </div>
+        <a href="{% url 'department_create' %}" class="btn btn-filled">Register Department</a>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+        <form method="get" action="{% url 'department_list' %}" style="display: flex; gap: 10px;">
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search by department, leader, or phone..."
+                   style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <button type="submit" class="btn btn-filled">Search</button>
+            {% if query %}
+                <a href="{% url 'department_list' %}" class="btn btn-outline" style="color: var(--primary-color); border-color: var(--primary-color);">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background-color: var(--primary-color); color: white;">
+                    <th style="padding: 12px 15px;">Department</th>
+                    <th style="padding: 12px 15px;">Leader</th>
+                    <th style="padding: 12px 15px;">Phone</th>
+                    <th style="padding: 12px 15px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for department in departments %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px 15px;">{{ department.get_name_display }}</td>
+                    <td style="padding: 12px 15px;">{{ department.leader.full_name|default:"Not assigned" }}</td>
+                    <td style="padding: 12px 15px;">{{ department.leader.phone_number|default:"-" }}</td>
+                    <td style="padding: 12px 15px;">
+                        <a href="{% url 'department_detail' department.pk %}" style="color: var(--primary-color); text-decoration: none; margin-right: 10px;">View</a>
+                        <a href="{% url 'department_update' department.pk %}" style="color: #4a90e2; text-decoration: none; margin-right: 10px;">Edit</a>
+                        <a href="{% url 'department_delete' department.pk %}" style="color: #d9534f; text-decoration: none;">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 20px; text-align: center; color: #777;">No departments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

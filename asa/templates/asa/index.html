@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ASA RP Ngoma College{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'asa/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 10px;">
+                    <img src="{% static 'asa/img/logo.png' %}" alt="Logo" style="height: 40px; width: auto;">
+                    <span>ASA RP</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        {% if can_view_members %}
+                            <a href="{% url 'member_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Members</a>
+                        {% endif %}
+                        {% if is_secretary_user %}
+                            <a href="{% url 'council_member_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Council</a>
+                            <a href="{% url 'department_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Departments</a>
+                        {% endif %}
+                
+        
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline" style="background: none; border: 2px solid white; cursor: pointer;">Logout</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-outline">Register</a>
+                    <a href="{% url 'login' %}" class="btn btn-filled">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+        <div class="welcome-bar">
+            <h1>Welcome to ASA RP Ngoma College</h1>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        {% if user.is_authenticated and is_secretary_user %}
+        {% include "asa/partials/secretary_features.html" %}
+        {% else %}
+        <section class="hero">
+            <div class="hero-content">
+                <p>And this gospel of the kingdom shall be preached in all the world 
+                for a witness unto all nations; and then shall the end come.</p><br>
+                <p>Mathews 24:14</p>
+            </div>
+        </section>
+        {% endif %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 ASA RP Ngoma College. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;">
+    <h2 style="color: var(--primary-color); margin-bottom: 20px;">Logged Out</h2>
+    <p>You have been successfully logged out.</p>
+    <div style="margin-top: 20px;">
+        <a href="{% url 'login' %}" class="btn btn-filled" style="display: inline-block;">Log in again</a>
+    </div>
+</div>
+{% endblock %}

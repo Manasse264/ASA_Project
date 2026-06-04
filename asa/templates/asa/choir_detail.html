@@ -1,0 +1,100 @@
+{% extends "asa/index.html" %}
+
+{% block title %}{{ choir.name }} - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">{{ choir.name }}</h2>
+            <p style="color: #666; max-width: 600px;">{{ choir.description|default:"No description provided." }}</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'choir_update' choir.pk %}" class="btn btn-outline" style="color: #4a90e2; border-color: #4a90e2;">Edit Choir</a>
+            <a href="{% url 'choir_list' %}" class="btn btn-outline" style="color: var(--primary-color); border-color: var(--primary-color);">Back to List</a>
+        </div>
+    </div>
+
+    <!-- Leaders Section -->
+    <div style="margin-bottom: 3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="color: var(--primary-color);">Choir Leaders</h3>
+            <a href="{% url 'choir_leader_add' choir.pk %}" class="btn btn-filled" style="padding: 5px 15px; font-size: 0.9rem;">Add Leader</a>
+        </div>
+        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background-color: #f8f9fa;">
+                    <tr>
+                        <th style="padding: 12px 15px;">Name</th>
+                        <th style="padding: 12px 15px;">Position</th>
+                        <th style="padding: 12px 15px;">Status</th>
+                        <th style="padding: 12px 15px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leader in leaders %}
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px 15px;">{{ leader.member.full_name }}</td>
+                        <td style="padding: 12px 15px;">{{ leader.position }}</td>
+                        <td style="padding: 12px 15px;">
+                            {% if leader.is_active %}
+                                <span style="color: #28a745;">Active</span>
+                            {% else %}
+                                <span style="color: #6c757d;">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'choir_leader_update' leader.pk %}" style="color: #4a90e2; text-decoration: none; margin-right: 10px;">Edit</a>
+                            <a href="{% url 'choir_leader_delete' leader.pk %}" style="color: #d9534f; text-decoration: none;">Remove</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="padding: 15px; text-align: center; color: #777;">No leaders assigned.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Members Section -->
+    <div style="margin-bottom: 3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="color: var(--primary-color);">Choir Members</h3>
+            <a href="{% url 'choir_member_add' choir.pk %}" class="btn btn-filled" style="padding: 5px 15px; font-size: 0.9rem;">Add Member</a>
+        </div>
+        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background-color: #f8f9fa;">
+                    <tr>
+                        <th style="padding: 12px 15px;">Name</th>
+                        <th style="padding: 12px 15px;">Role (Voice)</th>
+                        <th style="padding: 12px 15px;">Joined Date</th>
+                        <th style="padding: 12px 15px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px 15px;">{{ member.member.full_name }}</td>
+                        <td style="padding: 12px 15px;">{{ member.role|default:"-" }}</td>
+                        <td style="padding: 12px 15px;">{{ member.join_date|date:"M d, Y" }}</td>
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'choir_member_update' member.pk %}" style="color: #4a90e2; text-decoration: none; margin-right: 10px;">Edit</a>
+                            <a href="{% url 'choir_member_delete' member.pk %}" style="color: #d9534f; text-decoration: none;">Remove</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="padding: 15px; text-align: center; color: #777;">No members registered.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    </div>
+</div>
+{% endblock %}

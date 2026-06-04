@@ -1,0 +1,58 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Choirs - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+{% if is_secretary_user %}
+    {% include "asa/partials/secretary_features.html" %}
+{% endif %}
+
+<div style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color);">Choirs</h2>
+        <a href="{% url 'choir_create' %}" class="btn btn-filled">Register New Choir</a>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+        <form method="get" action="{% url 'choir_list' %}" style="display: flex; gap: 10px;">
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search by choir name or description..." 
+                   style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <button type="submit" class="btn btn-filled">Search</button>
+            {% if query %}
+                <a href="{% url 'choir_list' %}" class="btn btn-outline" style="color: var(--primary-color); border-color: var(--primary-color);">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background-color: var(--primary-color); color: white;">
+                    <th style="padding: 12px 15px;">Choir Name</th>
+                    <th style="padding: 12px 15px;">Description</th>
+                    <th style="padding: 12px 15px;">Registration Date</th>
+                    <th style="padding: 12px 15px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for choir in choirs %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px 15px;">{{ choir.name }}</td>
+                    <td style="padding: 12px 15px;">{{ choir.description|truncatewords:10|default:"-" }}</td>
+                    <td style="padding: 12px 15px;">{{ choir.registration_date|date:"M d, Y" }}</td>
+                    <td style="padding: 12px 15px;">
+                        <a href="{% url 'choir_detail' choir.pk %}" style="color: var(--primary-color); text-decoration: none; margin-right: 10px;">View</a>
+                        <a href="{% url 'choir_update' choir.pk %}" style="color: #4a90e2; text-decoration: none; margin-right: 10px;">Edit</a>
+                        <a href="{% url 'choir_delete' choir.pk %}" style="color: #d9534f; text-decoration: none;">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 20px; text-align: center; color: #777;">No choirs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "asa/index.html" %}
+
+{% block title %}{{ member.full_name }} - Member Profile{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem 5%; max-width: 800px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color);">Member Profile</h2>
+        <div>
+            <a href="{% url 'member_list' %}" class="btn btn-outline" style="color: var(--primary-color); border-color: var(--primary-color);">Back to List</a>
+            {% if is_secretary_user %}
+                <a href="{% url 'member_update' member.pk %}" class="btn btn-filled">Edit</a>
+                <a href="{% url 'member_update' member.pk %}" class="btn btn-filled">Update</a>
+                <a href="{% url 'member_delete' member.pk %}" class="btn btn-outline" style="color: #d9534f; border-color: #d9534f;">Delete</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <p><strong>First Name:</strong> {{ member.first_name }}</p>
+                <p><strong>Last Name:</strong> {{ member.last_name }}</p>
+                <p><strong>Gender:</strong> {{ member.get_gender_display }}</p>
+                <p><strong>Date of Birth:</strong> {{ member.date_of_birth }}</p>
+            </div>
+            <div>
+                <p><strong>Phone:</strong> {{ member.phone_number|default:"Not provided" }}</p>
+                <p><strong>Email:</strong> {{ member.email|default:"Not provided" }}</p>
+                <p><strong>Baptism Date:</strong> {{ member.baptism_date|default:"Not baptized" }}</p>
+                <p><strong>Registration Date:</strong> {{ member.registration_date|date:"F j, Y" }}</p>
+            </div>
+        </div>
+        <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+            <p><strong>Address:</strong></p>
+            <p>{{ member.address|linebreaks|default:"No address provided" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

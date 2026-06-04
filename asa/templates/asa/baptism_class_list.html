@@ -1,0 +1,49 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Baptism Classes - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color);">Baptism Classes</h2>
+        <a href="{% url 'baptism_class_create' %}" class="btn btn-filled">Create New Class</a>
+    </div>
+
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background-color: var(--primary-color); color: white;">
+                    <th style="padding: 12px 15px;">Class Name</th>
+                    <th style="padding: 12px 15px;">Instructor</th>
+                    <th style="padding: 12px 15px;">Start Date</th>
+                    <th style="padding: 12px 15px;">Status</th>
+                    <th style="padding: 12px 15px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class in classes %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px 15px;">{{ class.name }}</td>
+                    <td style="padding: 12px 15px;">{{ class.instructor.full_name|default:"-" }}</td>
+                    <td style="padding: 12px 15px;">{{ class.start_date|date:"M d, Y" }}</td>
+                    <td style="padding: 12px 15px;">
+                        {% if class.is_active %}
+                            <span style="color: #28a745;">Active</span>
+                        {% else %}
+                            <span style="color: #6c757d;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px 15px;">
+                        <a href="{% url 'baptism_class_detail' class.pk %}" style="color: var(--primary-color); text-decoration: none;">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 20px; text-align: center; color: #777;">No baptism classes found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

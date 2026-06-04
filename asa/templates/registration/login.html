@@ -1,0 +1,43 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Login - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; color: var(--primary-color); margin-bottom: 20px;">Login</h2>
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
+                <label for="{{ field.id_for_label }}" style="font-weight: bold; color: var(--primary-color);">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <small style="color: #d9534f;">{{ field.errors|striptags }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            <div style="color: #d9534f; text-align: center; margin-bottom: 10px;">
+                {{ form.non_field_errors|striptags }}
+            </div>
+        {% endif %}
+        <button type="submit" class="btn btn-filled" style="cursor: pointer; width: 100%; border: none; padding: 10px; font-size: 1rem;">Login</button>
+    </form>
+    <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+        <a href="{% url 'password_reset' %}" style="color: var(--primary-color); text-decoration: none; font-size: 0.9rem;">Forgot password?</a>
+    </div>
+</div>
+
+<style>
+    input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+    input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+</style>
+{% endblock %}

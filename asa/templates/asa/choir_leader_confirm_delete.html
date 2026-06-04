@@ -1,0 +1,21 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Remove Leader from Choir - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem 5%; max-width: 600px; margin: 0 auto; text-align: center;">
+    <h2 style="color: #d9534f; margin-bottom: 2rem;">Remove Choir Leader</h2>
+    
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 2rem;">
+        <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+            Are you sure you want to remove <strong>{{ choir_leader.member.full_name }}</strong> as a leader from the choir <strong>{{ choir_leader.choir.name }}</strong>?
+        </p>
+
+        <form method="post" style="display: flex; gap: 10px; justify-content: center;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-filled" style="background-color: #d9534f; border-color: #d9534f; cursor: pointer;">Yes, Remove</button>
+            <a href="{% url 'choir_detail' choir_leader.choir.pk %}" class="btn btn-outline" style="color: var(--primary-color); border-color: var(--primary-color);">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
