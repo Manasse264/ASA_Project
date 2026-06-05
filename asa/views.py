@@ -9,6 +9,9 @@ from .models import CouncilMember, Department, Member, Choir, ChoirMember, Choir
 def register(request):
     if request.user.is_authenticated:
         return redirect('index')
+    
+    context = base_context(request.user)
+    
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -22,7 +25,9 @@ def register(request):
             return redirect('index')
     else:
         form = UserRegistrationForm()
-    return render(request, 'asa/register.html', {'form': form})
+    
+    context['form'] = form
+    return render(request, 'asa/register.html', context)
 
 SECRETARY_USERNAMES = {'secretary', 'churchsecretary', 'church_secretary'}
 
