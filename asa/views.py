@@ -33,24 +33,35 @@ def register(request):
 SECRETARY_USERNAMES = {'secretary', 'churchsecretary', 'church_secretary'}
 
 def is_secretary(user):
-    if not user.is_authenticated:
+    if not user or not user.is_authenticated:
         return False
-    # Use hasattr and getattr safely
-    profile = getattr(user, 'profile', None)
-    profile_role = getattr(profile, 'role', None) if profile else None
-    
-    return (
-        profile_role == 'SECRETARY'
-        or user.groups.filter(name__iexact='Church Secretary').exists()
-        or user.username.lower().replace(' ', '_') in SECRETARY_USERNAMES
-    )
+    try:
+        # Check by username first (easiest/safest)
+        if user.username.lower().replace(' ', '_') in SECRETARY_USERNAMES:
+            return True
+        # Check by profile role
+        profile = getattr(user, 'profile', None)
+        if profile and getattr(profile, 'role', None) == 'SECRETARY':
+            return True
+        # Check by group (if table exists)
+        if user.groups.filter(name__iexact='Church Secretary').exists():
+            return True
+    except Exception:
+        pass
+    return False
 
 def is_elder(user):
-    if not user.is_authenticated:
+    if not user or not user.is_authenticated:
         return False
-    profile = getattr(user, 'profile', None)
-    profile_role = getattr(profile, 'role', None) if profile else None
-    return profile_role == 'ELDER' or user.groups.filter(name__iexact='First Church Elder').exists()
+    try:
+        profile = getattr(user, 'profile', None)
+        if profile and getattr(profile, 'role', None) == 'ELDER':
+            return True
+        if user.groups.filter(name__iexact='First Church Elder').exists():
+            return True
+    except Exception:
+        pass
+    return False
 
 def base_context(user):
     is_secretary_user = is_secretary(user)
