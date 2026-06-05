@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import CouncilMember, Department, Member, Choir, ChoirMember, ChoirLeader, BaptismClass, UserProfile
+from .models import CouncilMember, Department, Member, Choir, ChoirMember, ChoirLeader, BaptismClass, UserProfile, Family, SabbathSchoolSession
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
