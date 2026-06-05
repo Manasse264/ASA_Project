@@ -83,7 +83,6 @@ def base_context(user):
         'can_view_members': is_secretary_user or is_elder(user),
     }
 
-# Family Views
 @login_required
 @role_required(['SECRETARY', 'SS_LEADER'])
 def family_list(request):
