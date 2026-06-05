@@ -83,6 +83,17 @@ def base_context(user):
         'can_view_members': is_secretary_user or is_elder(user),
     }
 
+def role_required(allowed_roles):
+    def check_role(user):
+        if not user.is_authenticated:
+            return False
+        if 'SECRETARY' in allowed_roles and is_secretary(user):
+            return True
+        if 'ELDER' in allowed_roles and is_elder(user):
+            return True
+        return getattr(getattr(user, 'profile', None), 'role', None) in allowed_roles
+    return user_passes_test(check_role)
+
 @login_required
 @role_required(['SECRETARY', 'SS_LEADER'])
 def family_list(request):
