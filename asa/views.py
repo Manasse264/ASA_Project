@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from .models import CouncilMember, Department, Member, Choir, ChoirMember, ChoirLeader, BaptismClass, UserProfile
+from .forms import CouncilMemberForm, DepartmentForm, MemberForm, ChoirForm, ChoirMemberForm, ChoirLeaderForm, ChoirMemberCreateForm, BaptismCandidateForm, BaptismClassForm, UserRegistrationForm
 
 def register(request):
     if request.user.is_authenticated:
