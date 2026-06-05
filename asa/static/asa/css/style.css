@@ -32,13 +32,26 @@ body {
 
 .logo {
     padding-left: 0;
+    margin-left: 0;
 }
 
-.logo a {
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--white);
     text-decoration: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .nav-links {

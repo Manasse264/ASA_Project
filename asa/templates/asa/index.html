@@ -13,11 +13,12 @@
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 10px;">
-                    <img src="{% static 'asa/img/logo.png' %}" alt="Logo" style="height: 40px; width: auto;">
+                <a href="{% url 'index' %}" class="logo-link">
+                    <img src="{% static 'asa/img/logo.png' %}" alt="Logo" class="logo-img">
                     <span>ASA RP</span>
                 </a>
             </div>
+
             <div class="nav-links">
                 {% if user.is_authenticated %}
                     <div style="display: flex; align-items: center; gap: 20px;">
