@@ -34,6 +34,16 @@ urlpatterns = [
     path('choir-leaders/<int:pk>/delete/', views.choir_leader_delete, name='choir_leader_delete'),
     path('baptism/candidates/', views.candidate_list, name='candidate_list'),
     path('baptism/candidates/add/', views.candidate_create, name='candidate_create'),
+    # Family URLs
+    path('families/', views.family_list, name='family_list'),
+    path('families/add/', views.family_create, name='family_create'),
+
+    # Sabbath School Attendance URLs
+    path('ss/attendance/', views.ss_attendance_list, name='ss_attendance_list'),
+    path('ss/attendance/add/', views.ss_attendance_create, name='ss_attendance_create'),
+    path('ss/attendance/<int:pk>/record/', views.ss_attendance_record, name='ss_attendance_record'),
+    path('ss/attendance/<int:pk>/report/', views.ss_attendance_report, name='ss_attendance_report'),
+
     path('baptism/classes/', views.baptism_class_list, name='baptism_class_list'),
     path('baptism/classes/add/', views.baptism_class_create, name='baptism_class_create'),
     path('baptism/classes/<int:pk>/', views.baptism_class_detail, name='baptism_class_detail'),

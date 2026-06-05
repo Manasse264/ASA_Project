@@ -1,0 +1,52 @@
+{% extends "asa/index.html" %}
+{% load attendance_extras %}
+
+{% block title %}Record Attendance - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 5%;">
+    <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">Record Attendance</h2>
+    <p style="margin-bottom: 2rem;"><strong>Date:</strong> {{ session.date }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="table-container" style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: var(--secondary-color); text-align: left;">
+                        <th style="padding: 12px; border-bottom: 2px solid #ddd; width: 50px;">Present</th>
+                        <th style="padding: 12px; border-bottom: 2px solid #ddd;">Member Name</th>
+                        <th style="padding: 12px; border-bottom: 2px solid #ddd;">Family & Choirs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px; text-align: center;">
+                            <input type="checkbox" name="present_members" value="{{ member.id }}" 
+                                   {% if current_attendance|get_item:member.id %}checked{% endif %}
+                                   style="transform: scale(1.5);">
+                        </td>
+                        <td style="padding: 12px;">{{ member.full_name }}</td>
+                        <td style="padding: 12px;">
+                            {% if member.family %}
+                            <span style="background: #e1f5fe; color: #0288d1; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; margin-right: 5px;">Family: {{ member.family.name }}</span>
+                            {% endif %}
+                            {% for choir_member in member.choirmember_set.all %}
+                            <span style="background: #fff3e0; color: #f57c00; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; margin-right: 5px;">{{ choir_member.choir.name }}</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; gap: 10px; position: sticky; bottom: 20px; background: rgba(255,255,255,0.9); padding: 1rem; border-radius: 8px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+            <button type="submit" name="save_draft" class="btn btn-outline">Save Draft</button>
+            <button type="submit" name="submit_report" class="btn btn-filled" onclick="return confirm('Submit this report to the Secretary? You will not be able to edit it anymore.')">Submit to Secretary</button>
+            <a href="{% url 'ss_attendance_list' %}" class="btn btn-outline" style="background: #eee; color: #333;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

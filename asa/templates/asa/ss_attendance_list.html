@@ -1,0 +1,52 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Sabbath School Attendance - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color);">Sabbath School Attendance</h2>
+        {% if is_ss_leader_user %}
+        <a href="{% url 'ss_attendance_create' %}" class="btn btn-filled">Start New Session</a>
+        {% endif %}
+    </div>
+
+    <div class="table-container" style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead>
+                <tr style="background-color: var(--secondary-color); text-align: left;">
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Date</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Status</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Present</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">{{ session.date }}</td>
+                    <td style="padding: 12px;">
+                        {% if session.is_submitted %}
+                        <span style="color: #28a745; font-weight: bold;">Submitted</span>
+                        {% else %}
+                        <span style="color: #ffc107; font-weight: bold;">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">{{ session.attendance_records.filter.is_present.count }}</td>
+                    <td style="padding: 12px;">
+                        <a href="{% url 'ss_attendance_report' session.pk %}" style="color: var(--primary-color); margin-right: 15px;">View Report</a>
+                        {% if not session.is_submitted and is_ss_leader_user %}
+                        <a href="{% url 'ss_attendance_record' session.pk %}" style="color: #28a745;">Record Attendance</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 20px; text-align: center;">No attendance sessions found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

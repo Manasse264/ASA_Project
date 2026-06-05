@@ -63,12 +63,150 @@ def is_elder(user):
         pass
     return False
 
+def is_ss_leader(user):
+    if not user or not user.is_authenticated:
+        return False
+    try:
+        profile = getattr(user, 'profile', None)
+        if profile and getattr(profile, 'role', None) == 'SS_LEADER':
+            return True
+    except Exception:
+        pass
+    return False
+
 def base_context(user):
     is_secretary_user = is_secretary(user)
+    is_ss_leader_user = is_ss_leader(user)
     return {
         'is_secretary_user': is_secretary_user,
+        'is_ss_leader_user': is_ss_leader_user,
         'can_view_members': is_secretary_user or is_elder(user),
     }
+
+# Family Views
+@login_required
+@role_required(['SECRETARY', 'SS_LEADER'])
+def family_list(request):
+    families = Family.objects.all().order_by('name')
+    return render(request, 'asa/family_list.html', {'families': families, **base_context(request.user)})
+
+@login_required
+@role_required(['SECRETARY', 'SS_LEADER'])
+def family_create(request):
+    if request.method == 'POST':
+        form = FamilyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('family_list')
+    else:
+        form = FamilyForm()
+    return render(request, 'asa/family_form.html', {'form': form, 'title': 'Create Family', **base_context(request.user)})
+
+# Attendance Views
+@login_required
+@role_required(['SECRETARY', 'SS_LEADER'])
+def ss_attendance_list(request):
+    sessions = SabbathSchoolSession.objects.all().order_by('-date')
+    return render(request, 'asa/ss_attendance_list.html', {'sessions': sessions, **base_context(request.user)})
+
+@login_required
+@role_required(['SS_LEADER'])
+def ss_attendance_create(request):
+    if request.method == 'POST':
+        form = SabbathSchoolSessionForm(request.POST)
+        if form.is_valid():
+            session = form.save(commit=False)
+            session.recorder = request.user
+            session.save()
+            return redirect('ss_attendance_record', pk=session.pk)
+    else:
+        form = SabbathSchoolSessionForm()
+    return render(request, 'asa/ss_attendance_form.html', {'form': form, 'title': 'New Attendance Session', **base_context(request.user)})
+
+@login_required
+@role_required(['SS_LEADER'])
+def ss_attendance_record(request, pk):
+    session = get_object_or_404(SabbathSchoolSession, pk=pk)
+    if session.is_submitted:
+        return redirect('ss_attendance_report', pk=pk)
+    
+    members = Member.objects.filter(status='MEMBER').order_by('last_name')
+    
+    if request.method == 'POST':
+        present_member_ids = request.POST.getlist('present_members')
+        # Clear existing records for this session
+        MemberAttendance.objects.filter(session=session).delete()
+        
+        # Create new records
+        attendance_records = []
+        for member in members:
+            is_present = str(member.id) in present_member_ids
+            attendance_records.append(MemberAttendance(
+                session=session,
+                member=member,
+                is_present=is_present
+            ))
+        MemberAttendance.objects.bulk_create(attendance_records)
+        
+        if 'submit_report' in request.POST:
+            session.is_submitted = True
+            session.submission_date = datetime.datetime.now()
+            session.save()
+            return redirect('ss_attendance_report', pk=pk)
+            
+        return redirect('ss_attendance_list')
+
+    # Get current attendance mapping
+    current_attendance = {a.member_id: a.is_present for a in session.attendance_records.all()}
+    
+    return render(request, 'asa/ss_attendance_record.html', {
+        'session': session,
+        'members': members,
+        'current_attendance': current_attendance,
+        **base_context(request.user)
+    })
+
+@login_required
+@role_required(['SECRETARY', 'SS_LEADER'])
+def ss_attendance_report(request, pk):
+    session = get_object_or_404(SabbathSchoolSession, pk=pk)
+    records = session.attendance_records.select_related('member', 'member__family').all()
+    
+    total_members = Member.objects.filter(status='MEMBER').count()
+    total_present = records.filter(is_present=True).count()
+    
+    # Calculate choir stats
+    choirs = Choir.objects.all()
+    choir_stats = []
+    for choir in choirs:
+        choir_members = choir.members.values_list('member_id', flat=True)
+        present_in_choir = records.filter(member_id__in=choir_members, is_present=True).count()
+        choir_stats.append({
+            'name': choir.name,
+            'total': len(choir_members),
+            'present': present_in_choir
+        })
+        
+    # Calculate family stats
+    families = Family.objects.all()
+    family_stats = []
+    for family in families:
+        family_members = family.members.all()
+        present_in_family = records.filter(member_id__in=family_members, is_present=True).count()
+        family_stats.append({
+            'name': family.name,
+            'total': family_members.count(),
+            'present': present_in_family
+        })
+
+    return render(request, 'asa/ss_attendance_report.html', {
+        'session': session,
+        'total_members': total_members,
+        'total_present': total_present,
+        'choir_stats': choir_stats,
+        'family_stats': family_stats,
+        **base_context(request.user)
+    })
 
 class RoleBasedLoginView(LoginView):
     template_name = 'registration/login.html'

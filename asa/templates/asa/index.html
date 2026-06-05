@@ -29,6 +29,10 @@
                             <a href="{% url 'council_member_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Council</a>
                             <a href="{% url 'department_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Departments</a>
                         {% endif %}
+                        {% if is_ss_leader_user %}
+                            <a href="{% url 'ss_attendance_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Attendance</a>
+                            <a href="{% url 'family_list' %}" style="color: white; text-decoration: none; font-weight: 500;">Families</a>
+                        {% endif %}
                 
         
                         <form action="{% url 'logout' %}" method="post" style="display: inline;">
@@ -49,8 +53,21 @@
 
     <main>
         {% block content %}
-        {% if user.is_authenticated and is_secretary_user %}
-        {% include "asa/partials/secretary_features.html" %}
+        {% if user.is_authenticated %}
+            {% if is_secretary_user %}
+                {% include "asa/partials/secretary_features.html" %}
+            {% endif %}
+            {% if is_ss_leader_user %}
+                {% include "asa/partials/ss_features.html" %}
+            {% endif %}
+            
+            {% if not is_secretary_user and not is_ss_leader_user %}
+                <section class="hero">
+                    <div class="hero-content">
+                        <p>Welcome, {{ user.username }}. Please contact an administrator for role assignments.</p>
+                    </div>
+                </section>
+            {% endif %}
         {% else %}
         <section class="hero">
             <div class="hero-content">

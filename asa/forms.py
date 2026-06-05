@@ -96,6 +96,19 @@ class ChoirMemberForm(forms.ModelForm):
         model = ChoirMember
         fields = ['member', 'role']
 
+class FamilyForm(forms.ModelForm):
+    class Meta:
+        model = Family
+        fields = ['name', 'head_of_family']
+
+class SabbathSchoolSessionForm(forms.ModelForm):
+    class Meta:
+        model = SabbathSchoolSession
+        fields = ['date']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
 class ChoirLeaderForm(forms.ModelForm):
     class Meta:
         model = ChoirLeader

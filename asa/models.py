@@ -23,6 +23,14 @@ def create_or_save_user_profile(sender, instance, created, **kwargs):
     UserProfile.objects.get_or_create(user=instance)
     instance.profile.save()
 
+class Family(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    head_of_family = models.ForeignKey('Member', on_delete=models.SET_NULL, blank=True, null=True, related_name='headed_family')
+    registration_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 class Member(models.Model):
     GENDER_CHOICES = [
         ('M', 'Male'),
@@ -44,6 +52,7 @@ class Member(models.Model):
     is_baptized = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='MEMBER')
     baptism_date = models.DateField(blank=True, null=True)
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, blank=True, null=True, related_name='members')
     registration_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -52,6 +61,27 @@ class Member(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+class SabbathSchoolSession(models.Model):
+    date = models.DateField(unique=True)
+    recorder = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    is_submitted = models.BooleanField(default=False)
+    submission_date = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Sabbath School - {self.date}"
+
+class MemberAttendance(models.Model):
+    session = models.ForeignKey(SabbathSchoolSession, on_delete=models.CASCADE, related_name='attendance_records')
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='attendance_history')
+    is_present = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('session', 'member')
+
+    def __str__(self):
+        return f"{self.member.full_name} - {self.session.date} - {'Present' if self.is_present else 'Absent'}"
 
 class BaptismClass(models.Model):
     name = models.CharField(max_length=100)

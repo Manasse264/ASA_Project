@@ -1,0 +1,26 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Families - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color);">Church Families</h2>
+        {% if is_ss_leader_user or is_secretary_user %}
+        <a href="{% url 'family_create' %}" class="btn btn-filled">Add New Family</a>
+        {% endif %}
+    </div>
+
+    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+        {% for family in families %}
+        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="color: var(--primary-color); margin-bottom: 10px;">{{ family.name }}</h3>
+            <p><strong>Head:</strong> {{ family.head_of_family|default:"Not set" }}</p>
+            <p><strong>Members:</strong> {{ family.members.count }}</p>
+        </div>
+        {% empty %}
+        <p>No families registered yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

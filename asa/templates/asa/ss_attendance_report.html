@@ -1,0 +1,100 @@
+{% extends "asa/index.html" %}
+
+{% block title %}Attendance Report - ASA RP Ngoma College{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="color: var(--primary-color); margin-bottom: 5px;">Attendance Report</h2>
+            <p><strong>Date:</strong> {{ session.date }}</p>
+        </div>
+        <div style="text-align: right;">
+            <p><strong>Status:</strong> 
+                {% if session.is_submitted %}
+                <span style="color: #28a745;">Submitted to Secretary</span>
+                {% else %}
+                <span style="color: #ffc107;">Draft</span>
+                {% endif %}
+            </p>
+            {% if not session.is_submitted and is_ss_leader_user %}
+            <a href="{% url 'ss_attendance_record' session.pk %}" class="btn btn-filled" style="margin-top: 10px; display: inline-block;">Edit Attendance</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 3rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+            <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 5px;">{{ total_present }}</h1>
+            <p style="color: #666;">Total Present</p>
+            <small>out of {{ total_members }} members</small>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+            <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 5px;">{{ choir_stats|length }}</h1>
+            <p style="color: #666;">Choirs Tracked</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+            <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 5px;">{{ family_stats|length }}</h1>
+            <p style="color: #666;">Families Tracked</p>
+        </div>
+    </div>
+
+    <!-- Detailed Breakdowns -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
+        <!-- Choir Breakdown -->
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px;">Choir Attendance</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; font-size: 0.9rem; color: #666;">
+                        <th style="padding: 10px;">Choir Name</th>
+                        <th style="padding: 10px; text-align: center;">Present</th>
+                        <th style="padding: 10px;">Participation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in choir_stats %}
+                    <tr style="border-top: 1px solid #eee;">
+                        <td style="padding: 12px;">{{ stat.name }}</td>
+                        <td style="padding: 12px; text-align: center;">{{ stat.present }} / {{ stat.total }}</td>
+                        <td style="padding: 12px;">
+                            <div style="background: #eee; height: 10px; border-radius: 5px; width: 100px;">
+                                <div style="background: var(--primary-color); height: 100%; border-radius: 5px; width: {% widthratio stat.present stat.total 100 %}%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Family Breakdown -->
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px;">Family Attendance</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; font-size: 0.9rem; color: #666;">
+                        <th style="padding: 10px;">Family Name</th>
+                        <th style="padding: 10px; text-align: center;">Present</th>
+                        <th style="padding: 10px;">Participation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in family_stats %}
+                    <tr style="border-top: 1px solid #eee;">
+                        <td style="padding: 12px;">{{ stat.name }}</td>
+                        <td style="padding: 12px; text-align: center;">{{ stat.present }} / {{ stat.total }}</td>
+                        <td style="padding: 12px;">
+                            <div style="background: #eee; height: 10px; border-radius: 5px; width: 100px;">
+                                <div style="background: #28a745; height: 100%; border-radius: 5px; width: {% widthratio stat.present stat.total 100 %}%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
