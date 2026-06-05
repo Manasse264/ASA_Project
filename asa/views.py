@@ -4,8 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
-from .models import CouncilMember, Department, Member, Choir, ChoirMember, ChoirLeader, BaptismClass
-from .forms import CouncilMemberForm, DepartmentForm, MemberForm, ChoirForm, ChoirMemberForm, ChoirLeaderForm, ChoirMemberCreateForm, BaptismCandidateForm, BaptismClassForm, UserRegistrationForm
+from .models import CouncilMember, Department, Member, Choir, ChoirMember, ChoirLeader, BaptismClass, UserProfile
 
 def register(request):
     if request.user.is_authenticated:
@@ -16,7 +15,8 @@ def register(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-            profile = user.profile
+            # Use get_or_create to be absolutely sure the profile exists
+            profile, created = UserProfile.objects.get_or_create(user=user)
             profile.role = form.cleaned_data['role']
             profile.save()
             return redirect('index')
