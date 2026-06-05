@@ -6,6 +6,8 @@ class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     role = forms.ChoiceField(choices=[
+        ('SECRETARY', 'Church Secretary'),
+        ('ELDER', 'First Church Elder'),
         ('TREASURER', 'Church Treasurer'),
         ('SS_LEADER', 'Sabbath School Leader'),
     ])

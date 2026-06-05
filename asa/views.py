@@ -58,9 +58,13 @@ class RoleBasedLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        if is_secretary(self.request.user):
-            return '/'
-        return super().get_success_url()
+        try:
+            user = self.request.user
+            if user.is_authenticated and is_secretary(user):
+                return '/'
+        except Exception:
+            pass
+        return super().get_success_url() or '/'
 
 def csrf_failure(request, reason=''):
     if request.path == '/accounts/login/':
