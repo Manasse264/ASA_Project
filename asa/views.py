@@ -29,7 +29,10 @@ SECRETARY_USERNAMES = {'secretary', 'churchsecretary', 'church_secretary'}
 def is_secretary(user):
     if not user.is_authenticated:
         return False
-    profile_role = getattr(getattr(user, 'profile', None), 'role', None)
+    # Use hasattr and getattr safely
+    profile = getattr(user, 'profile', None)
+    profile_role = getattr(profile, 'role', None) if profile else None
+    
     return (
         profile_role == 'SECRETARY'
         or user.groups.filter(name__iexact='Church Secretary').exists()
@@ -39,7 +42,8 @@ def is_secretary(user):
 def is_elder(user):
     if not user.is_authenticated:
         return False
-    profile_role = getattr(getattr(user, 'profile', None), 'role', None)
+    profile = getattr(user, 'profile', None)
+    profile_role = getattr(profile, 'role', None) if profile else None
     return profile_role == 'ELDER' or user.groups.filter(name__iexact='First Church Elder').exists()
 
 def base_context(user):
